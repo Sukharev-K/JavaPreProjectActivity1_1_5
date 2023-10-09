@@ -3,10 +3,7 @@ package jm.task.core.jdbc.dao;
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,8 +13,8 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void createUsersTable() {
-        try (Statement statement =
-                     Util.getMySQLConnection().createStatement()) {
+        try (Connection connection = Util.getMySQLConnection();
+             Statement statement = connection.createStatement()) {
             String createTableSQL = "CREATE TABLE IF NOT EXISTS mytestdb.User (" +
                     "id BIGINT AUTO_INCREMENT PRIMARY KEY," +
                     "name VARCHAR(255)," +
@@ -34,8 +31,8 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void dropUsersTable() {
-        try (Statement statement =
-                     Util.getMySQLConnection().createStatement()) {
+        try (Connection connection = Util.getMySQLConnection();
+             Statement statement = connection.createStatement()) {
             String dropTableSQL = "DROP TABLE IF EXISTS mytestdb.User";
             statement.execute(dropTableSQL);
         } catch (SQLException e) {
@@ -49,8 +46,9 @@ public class UserDaoJDBCImpl implements UserDao {
         String insertUserSQL = """
                 INSERT INTO mytestdb.User (name, lastname, age) VALUES (?, ?, ?)
                 """;
-        try (PreparedStatement preparedStatement =
-                     Util.getMySQLConnection().prepareStatement(insertUserSQL)) {
+        try (Connection connection = Util.getMySQLConnection();
+             PreparedStatement preparedStatement =
+                     connection.prepareStatement(insertUserSQL)) {
             preparedStatement.setString(1, name);
             preparedStatement.setString(2, lastName);
             preparedStatement.setByte(3, age);
@@ -66,8 +64,9 @@ public class UserDaoJDBCImpl implements UserDao {
     public void removeUserById(long id) {
         String deleteUserSQL = "DELETE FROM mytestdb.User WHERE id = ?";
 
-        try (PreparedStatement preparedStatement =
-                     Util.getMySQLConnection().prepareStatement(deleteUserSQL)) {
+        try (Connection connection = Util.getMySQLConnection();
+             PreparedStatement preparedStatement =
+                     connection.prepareStatement(deleteUserSQL)) {
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -82,8 +81,9 @@ public class UserDaoJDBCImpl implements UserDao {
         List<User> userList = new ArrayList<>();
         String selectAllUsersSQL = "SELECT * FROM mytestdb.User";
 
-        try (PreparedStatement preparedStatement =
-                     Util.getMySQLConnection().prepareStatement(selectAllUsersSQL);
+        try (Connection connection = Util.getMySQLConnection();
+             PreparedStatement preparedStatement =
+                     connection.prepareStatement(selectAllUsersSQL);
              ResultSet resultSet = preparedStatement.executeQuery()) {
             while (resultSet.next()) {
                 long id = resultSet.getLong("id");
@@ -107,8 +107,9 @@ public class UserDaoJDBCImpl implements UserDao {
     public void cleanUsersTable() {
         String cleanTableSQL = "DELETE FROM mytestdb.User";
 
-        try (PreparedStatement preparedStatement =
-                     Util.getMySQLConnection().prepareStatement(cleanTableSQL)) {
+        try (Connection connection = Util.getMySQLConnection();
+             PreparedStatement preparedStatement =
+                     connection.prepareStatement(cleanTableSQL)) {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
