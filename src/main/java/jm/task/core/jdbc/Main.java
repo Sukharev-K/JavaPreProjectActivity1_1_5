@@ -5,6 +5,11 @@ import jm.task.core.jdbc.dao.UserDaoJDBCImpl;
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.service.UserService;
 import jm.task.core.jdbc.service.UserServiceImpl;
+import jm.task.core.jdbc.util.Util;
+import org.hibernate.boot.Metadata;
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistry;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
 import java.util.List;
 
@@ -13,6 +18,7 @@ public class Main {
         // реализуйте алгоритм здесь
         UserService userService = new UserServiceImpl();
         userService.createUsersTable();
+
 
         User user1 = new User("Konstantin", "Sukharev", (byte) 26);
         userService.saveUser(user1.getName(), user1.getLastName(), user1.getAge());
@@ -38,6 +44,7 @@ public class Main {
         userService.cleanUsersTable();
         userService.dropUsersTable();
 
+        //Util.getSessionFactory();
 
     }
 }
